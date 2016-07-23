@@ -264,7 +264,7 @@ class modULL extends DolibarrModules
 	{
 		$sql = array();
 
-		$this->_load_tables('/modULL/sql/');
+		//$this->_load_tables('/mymodule/sql/');
 
 		return $this->_init($sql, $options);
 	}
