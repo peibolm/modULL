@@ -26,6 +26,7 @@
  *  \brief      Description and activation file for module MyModule
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
 /**
@@ -33,6 +34,8 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
  */
 class modULL extends DolibarrModules
 {
+	
+	public $SNS;
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -41,7 +44,7 @@ class modULL extends DolibarrModules
 	public function __construct($db)
 	{
         global $langs,$conf;
-
+	$this->SNS = new ExtraFields($db);
         $this->db = $db;
 
 		// Id for module (must be unique).
@@ -262,6 +265,18 @@ class modULL extends DolibarrModules
 	 */
 	public function init($options='')
 	{
+		$this->SNS->addExtraField($attrname = 'SNS',
+		$label = 'Codigo SNS',
+		$type = 'varchar',
+		$pos = 1,
+		$size = 9,
+		$elementtype = 'product',
+		$unique = 0,
+		$required = 0,
+		$default_value = '',
+		$param = 0,
+		$alwayseditable=1);
+
 		$sql = array();
 
 		$this->_load_tables('/modULL/sql/');
@@ -279,6 +294,9 @@ class modULL extends DolibarrModules
 	 */
 	public function remove($options = '')
 	{
+		$this->SNS->delete($attrname = 'SNS',
+		$elementtype = 'product');
+
 		$sql = array();
 
 		return $this->_remove($sql, $options);
