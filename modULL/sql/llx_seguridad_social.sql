@@ -16,11 +16,11 @@
 --
 -- Table of "seguridad_social" for adding catalog content
 -- ============================================================================
-
 create table llx_seguridad_social
 (
-  code			integer(9) PRIMARY KEY,
+  id			integer(9) PRIMARY KEY,
   description		tinytext,
   finance		double(8,2) NOT NULL,
-  user_contrib		double(8,2)
+  user_contrib		double(8,2),
+  renov			integer(2)
 )ENGINE=innodb;
