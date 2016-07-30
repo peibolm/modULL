@@ -265,8 +265,8 @@ class modULL extends DolibarrModules
 	 */
 	public function init($options='')
 	{
-		$this->SNS->addExtraField($attrname = 'SNS',
-		$label = 'Codigo SNS',
+		$this->SNS->addExtraField($attrname = 'cod_scs',
+		$label = 'Codigo scs',
 		$type = 'varchar',
 		$pos = 1,
 		$size = 9,
@@ -294,8 +294,8 @@ class modULL extends DolibarrModules
 	 */
 	public function remove($options = '')
 	{
-		$this->SNS->delete($attrname = 'SNS',
-		$elementtype = 'product');
+		/*$this->SNS->delete($attrname = 'SNS',
+		$elementtype = 'product');*/
 
 		$sql = array();
 

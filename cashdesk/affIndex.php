@@ -88,5 +88,7 @@ print '</div>'."\n";
 include_once 'affPied.php';
 
 print '</div></div></div>'."\n";
+//PABLOMARIN
 llxFooter();
+//-------------
 print '</body></html>'."\n";

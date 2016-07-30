@@ -497,7 +497,7 @@ class Seguridadsocial extends CommonObject
         $label.= '<div width="100%">';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/modULL/card.php?id='.$this->id.'"';
+        $link = '<a href="'.DOL_URL_ROOT.'/ULL/card.php?id='.$this->id.'"';
         $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
         $link.= '>';
 		$linkend='</a>';

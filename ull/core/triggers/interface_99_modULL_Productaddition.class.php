@@ -31,6 +31,7 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
+include DOL_DOCUMENT_ROOT.'/ull/lib/functions.lib.php';
 
 /**
  *  Class of triggers for demo module
@@ -54,25 +55,42 @@ class InterfaceProductaddition extends DolibarrTriggers
      * @param conf		    $conf       Object conf
      * @return int         				<0 if KO, 0 if no triggered ran, >0 if OK
      */
-    public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
-    {
+	function is_financed($id){
+		global $db;
+		$sql = "SELECT e.SNS";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product p";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFiX."product_extrafields e";
+		$sql.= " ON p.rowid = e.fk_object";
+		$sql.= " WHERE e.SNS NOT NULL";
+		$result = $db->query($sql);
+		if ($result) return 1;
+		else return 0;
+	}
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf){
 		// Put here code you want to execute when a Dolibarr business events occurs.
-        // Data and type of action are stored into $object and $action
+		// Data and type of action are stored into $object and $action
 	    
 		if ($action == 'LINEBILL_INSERT'){
-			//echo "<script type='text/javascript'>alert('$object->id Pruebaprueba')</script>";
 			setEventMessage('Esto es una prueba ' . $action, 'errors'); // errors, mesgs, warnings
 			return 1;
 		}
 		elseif ($action == 'TPV_ADDLINE'){
-			//echo "<script type='text/javascript'>alert('Esto es una prueba ');</script>";
-			setEventMessage('Esto es una prueba ' . $action, 'errors'); // errors, mesgs, warnings
+			if (is_financed($object->id)) {
+				$array = check_finance($object->id);
+				$finance = number_format($array['finance'], 2, '.', '');
+				$msg = 'Este producto dispone de '.$finance.'€ de financiación del SCS';
+				if ($array['user_contrib'] > 0){
+					$user_contrib = number_format($array['user_contrib'], 2, '.', '');
+					$msg.= '(Aport. usuario '.$user_contrib.'€.';
+				}
+				if (($array['price']-$array['user_contrib'])>240.40) //Comprobar si es posible endoso
+					$msg.= ' ENDOSO POSIBLE';
+				setEventMessage($msg , 'mesgs'); // errors, mesgs, warnings
+				}
+			else setEventMessage('Este producto NO tiene financiación :(', 'errors'); // errors, mesgs, warnings
 			return 1;
-}
+		}
 
-		else
-			return 0;
-
+		else return 0;
 	}
-
 }
