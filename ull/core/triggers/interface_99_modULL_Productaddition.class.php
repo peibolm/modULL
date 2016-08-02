@@ -31,13 +31,12 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
-include DOL_DOCUMENT_ROOT.'/ull/lib/functions.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/ull/lib/functions.lib.php';
 
 /**
  *  Class of triggers for demo module
  */
-class InterfaceProductaddition extends DolibarrTriggers
-{
+class InterfaceProductaddition extends DolibarrTriggers{
 
 	public $family = 'demo';
 	public $picto = 'technic';
@@ -55,23 +54,24 @@ class InterfaceProductaddition extends DolibarrTriggers
      * @param conf		    $conf       Object conf
      * @return int         				<0 if KO, 0 if no triggered ran, >0 if OK
      */
-	function is_financed($id){
-		global $db;
-		$sql = "SELECT e.SNS";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product p";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFiX."product_extrafields e";
-		$sql.= " ON p.rowid = e.fk_object";
-		$sql.= " WHERE e.SNS NOT NULL";
-		$result = $db->query($sql);
-		if ($result) return 1;
-		else return 0;
-	}
+
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf){
 		// Put here code you want to execute when a Dolibarr business events occurs.
 		// Data and type of action are stored into $object and $action
 	    
 		if ($action == 'LINEBILL_INSERT'){
-			setEventMessage('Esto es una prueba ' . $action, 'errors'); // errors, mesgs, warnings
+			if (is_financed($object->fk_product)){
+				$array = check_finance($object->fk_product);
+				$object->desc = "CÓDIGO SCS: ".$array['code'];
+				$aux = change_desc($object);
+				
+				$formconfirm = '';
+				$formtest = new Form($object->db);
+				$formconfirm = $formtest->formconfirm("http://google.es", "test", "test", 'confirm_delete', '', "yes", 1);
+				
+				//setEventMessage('Esto es una prueba ' .$object->rowid. ' ' .$object->desc. ' ' .$aux, 'errors'); // errors, mesgs, warnings
+				
+			}
 			return 1;
 		}
 		elseif ($action == 'TPV_ADDLINE'){
@@ -84,11 +84,15 @@ class InterfaceProductaddition extends DolibarrTriggers
 					$msg.= '(Aport. usuario '.$user_contrib.'€.';
 				}
 				if (($array['price']-$array['user_contrib'])>240.40) //Comprobar si es posible endoso
-					$msg.= ' ENDOSO POSIBLE';
+					$msg.= '. ENDOSO POSIBLE';
 				setEventMessage($msg , 'mesgs'); // errors, mesgs, warnings
 				}
 			else setEventMessage('Este producto NO tiene financiación :(', 'errors'); // errors, mesgs, warnings
 			return 1;
+		}
+		elseif ($action == 'BILL_VALIDATE'){
+				
+			//print_r($object);
 		}
 
 		else return 0;

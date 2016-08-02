@@ -40,3 +40,12 @@ function check_finance($id){
 	else return -1;
 }
 
+function change_desc($object){
+global $db;
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet";
+	$sql.= " SET description = '".$db->escape($object->desc);
+	$sql.= "' WHERE rowid = ".$object->rowid;
+	$result = $db->query($sql);
+	return $sql;
+}
+

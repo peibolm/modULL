@@ -276,6 +276,18 @@ class modULL extends DolibarrModules
 		$default_value = '',
 		$param = 0,
 		$alwayseditable=1);
+		
+		$this->SNS->addExtraField($attrname = 'cronico',
+		$label = '¿Crónico?',
+		$type = 'boolean',
+		$pos = 1,
+		$size = '',
+		$elementtype = 'facture',
+		$unique = 0,
+		$required = 0,
+		$default_value = '',
+		$param = 0,
+		$alwayseditable=0);
 
 		$sql = array();
 
@@ -294,8 +306,8 @@ class modULL extends DolibarrModules
 	 */
 	public function remove($options = '')
 	{
-		/*$this->SNS->delete($attrname = 'SNS',
-		$elementtype = 'product');*/
+		$this->SNS->delete($attrname = 'cronico',
+		$elementtype = 'product');
 
 		$sql = array();
 
