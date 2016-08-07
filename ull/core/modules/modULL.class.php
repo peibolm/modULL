@@ -73,7 +73,7 @@ class modULL extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='logo@modULL';
+		$this->picto='logo@ull';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /mymodule/core/xxxxx) (0=disable, 1=enable)
@@ -277,7 +277,7 @@ class modULL extends DolibarrModules
 		$param = 0,
 		$alwayseditable=1);
 		
-		$this->SNS->addExtraField($attrname = 'cronico',
+		/*$this->SNS->addExtraField($attrname = 'cronico',
 		$label = '¿Crónico?',
 		$type = 'boolean',
 		$pos = 1,
@@ -287,11 +287,11 @@ class modULL extends DolibarrModules
 		$required = 0,
 		$default_value = '',
 		$param = 0,
-		$alwayseditable=0);
+		$alwayseditable=0);*/
 
 		$sql = array();
 
-		$this->_load_tables('/modULL/sql/');
+		$this->_load_tables('/ull/sql/');
 
 		return $this->_init($sql, $options);
 	}
@@ -306,8 +306,8 @@ class modULL extends DolibarrModules
 	 */
 	public function remove($options = '')
 	{
-		$this->SNS->delete($attrname = 'cronico',
-		$elementtype = 'product');
+		/*$this->SNS->delete($attrname = 'cronico',
+		$elementtype = 'product');*/
 
 		$sql = array();
 

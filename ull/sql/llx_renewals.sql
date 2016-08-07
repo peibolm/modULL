@@ -14,6 +14,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- seguridad_social key
+-- Table of "seguridad_social" for adding catalog content
 -- ============================================================================
-ALTER TABLE llx_seguridad_social ADD INDEX idx_seguridad_social_code (id);
+create table llx_renewals
+(
+  id			integer(9) PRIMARY KEY,
+  renew_date	date
+)ENGINE=innodb;

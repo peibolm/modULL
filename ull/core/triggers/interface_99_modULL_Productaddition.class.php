@@ -64,10 +64,11 @@ class InterfaceProductaddition extends DolibarrTriggers{
 				$array = check_finance($object->fk_product);
 				$object->desc = "CÓDIGO SCS: ".$array['code'];
 				$aux = change_desc($object);
-				
+				//jbeta
 				$formconfirm = '';
 				$formtest = new Form($object->db);
 				$formconfirm = $formtest->formconfirm("http://google.es", "test", "test", 'confirm_delete', '', "yes", 1);
+				//----
 				
 				//setEventMessage('Esto es una prueba ' .$object->rowid. ' ' .$object->desc. ' ' .$aux, 'errors'); // errors, mesgs, warnings
 				
@@ -75,23 +76,25 @@ class InterfaceProductaddition extends DolibarrTriggers{
 			return 1;
 		}
 		elseif ($action == 'TPV_ADDLINE'){
+		
+		//COMPROBAR SI PRODUCTO AÑADIDO A TICKET DISPONE DE FINANCIACIÓN POR PARTE DEL SERVICIO CANARIO DE SALUD
 			if (is_financed($object->id)) {
 				$array = check_finance($object->id);
 				$finance = number_format($array['finance'], 2, '.', '');
-				$msg = 'Este producto dispone de '.$finance.'€ de financiación del SCS';
+				$msg = 'Este producto dispone de '.$finance.'€ de financiación del SCS.';
 				if ($array['user_contrib'] > 0){
 					$user_contrib = number_format($array['user_contrib'], 2, '.', '');
-					$msg.= '(Aport. usuario '.$user_contrib.'€.';
+					$msg.= '( Aport. usuario '.$user_contrib.'€.';
 				}
 				if (($array['price']-$array['user_contrib'])>240.40) //Comprobar si es posible endoso
-					$msg.= '. ENDOSO POSIBLE';
+					$msg.= ' ENDOSO POSIBLE.';
 				setEventMessage($msg , 'mesgs'); // errors, mesgs, warnings
 				}
 			else setEventMessage('Este producto NO tiene financiación :(', 'errors'); // errors, mesgs, warnings
 			return 1;
 		}
 		elseif ($action == 'BILL_VALIDATE'){
-				
+			//get_renewal();
 			//print_r($object);
 		}
 

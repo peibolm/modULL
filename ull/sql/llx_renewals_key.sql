@@ -16,4 +16,4 @@
 --
 -- seguridad_social key
 -- ============================================================================
-ALTER TABLE llx_seguridad_social ADD INDEX idx_seguridad_social_code (id);
+ALTER TABLE llx_renewals ADD INDEX idx_renewid (id);
