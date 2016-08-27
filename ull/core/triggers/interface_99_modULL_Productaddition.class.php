@@ -94,10 +94,15 @@ class InterfaceProductaddition extends DolibarrTriggers{
 			return 1;
 		}
 		elseif ($action == 'BILL_VALIDATE'){
-			//get_renewal();
-			//print_r($object);
+		//AÑADIR PRODUCTOS CON RENOVACIÓN A TABLA 'RENEWALS' SI LA FACTURA TIENE SELECCIONADA LA OPCIÓN CRÓNICO.
+			foreach($object->lines as $line){
+				$aux = is_renewable($line);
+				if ($aux!=0 && $object->array_options['options_cronico'] == 1){
+					$test = set_renewal($line->id,$object->date, $aux);
+					if ($test != 1) setEventMessage("Error al añadir renovación a la db.", ' errors');
+				}
+			}
 		}
-
 		else return 0;
 	}
 }

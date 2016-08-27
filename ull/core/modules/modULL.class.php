@@ -277,7 +277,7 @@ class modULL extends DolibarrModules
 		$param = 0,
 		$alwayseditable=1);
 		
-		/*$this->SNS->addExtraField($attrname = 'cronico',
+		$this->SNS->addExtraField($attrname = 'cronico',
 		$label = '¿Crónico?',
 		$type = 'boolean',
 		$pos = 1,
@@ -287,7 +287,7 @@ class modULL extends DolibarrModules
 		$required = 0,
 		$default_value = '',
 		$param = 0,
-		$alwayseditable=0);*/
+		$alwayseditable=0);
 
 		$sql = array();
 

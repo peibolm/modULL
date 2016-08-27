@@ -43,15 +43,18 @@ function check_finance($id){
 function is_renewable($object){
 	global $db;
 	$productid = $object->fk_product;
-	$sql = "SELECT *";
+	$sql = "SELECT s.renov as renew";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as d";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as e";
 	$sql.= " ON d.fk_product = e.fk_object";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX. "seguridad_social as s";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."seguridad_social as s";
 	$sql.= " ON e.cod_scs = s.id";
-	$sql.= " WHERE d.fk_product=".$productid." AND s.renew IS NOT NULL";
+	$sql.= " WHERE d.fk_product = ".$productid." AND s.renov IS NOT NULL ";
 	$result = $db->query($sql);
-	if ($result) return 1;
+	if ($result){
+		$objp = $db->fetch_object($result);
+		return $objp->renew;
+	}
 	else return 0;
 }
 
@@ -78,12 +81,22 @@ $message="Estimado {$name}, \n El material ortopédico {$itemname} obtenido a tr
 	else	return 0;
 	
 }
+
+function deleterenew($id){
+global $db;
+	$sql = "DELETE * FROM ".MAIN_DB_PREFIX."renewals";
+	$sql.= " WHERE id =".$id.")";
+	$resql = $db->query($sql);
+	if ($resql)
+		return 1;
+	else return -1;
+}
 /**
 *Obtains bought items that have to be reminded to renew (supposed to be called from cronjob)
 */
 function get_renewal(){
 global $db;
-	$sql = "SELECT c.nom as nom, c.email as email, p.label as itemname, r.renew_date as renew_date";
+	$sql = "SELECT c.nom as nom, c.email as email, p.label as itemname, r.renew_date as renew_date, r.id as rid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."renewals as r";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet as d";
 	$sql.= " ON r.id = d.rowid";
@@ -111,25 +124,56 @@ global $db;
 				);
 				
 				$sendit = composerenewemail($array["clientname"], $array["email"], $array["itemname"], $array["renewdate"]);
-				if (!$sendit) $err=1;
+				if ($sendit){
+					deleterenew($objp->rid);
+					
+				}
 		}
-		if ($err) setEventMessage("MALLLLLLL", 'errors');
-		else setEventMessage("Todo bien", 'mesgs');
-		return 1;
 	}
 	
 	else return -1;
 	
 }
 
+function addmonthstodate($date,$months){
+	$monthToAdd = $months;
+
+	$d1 = $date;
+
+	$year = $d1->format('Y');
+	$month = $d1->format('n');
+	$day = $d1->format('d');
+
+	$year += floor($monthToAdd/12);
+	$monthToAdd = $monthToAdd%12;
+	$month += $monthToAdd;
+	if($month > 12) {
+		$year ++;
+		$month = $month % 12;
+		if($month === 0)
+		    $month = 12;
+	}
+
+	if(!checkdate($month, $day, $year)) {
+		$d2 = DateTime::createFromFormat('Y-n-j', $year.'-'.$month.'-1');
+		$d2->modify('last day of');
+	}else {
+		$d2 = DateTime::createFromFormat('Y-n-d', $year.'-'.$month.'-'.$day);
+	}
+	$d2->setTime($d1->format('H'), $d1->format('i'), $d1->format('s'));
+	return $d2;
+}
+
 /**
 * Adds a new line into renewal list
 */
 
-function set_renewal($id,$renew_date){
+function set_renewal($id,$invoice_date,$renov){
 global $db;
+	$date = new DateTime("@$invoice_date");
+	$date = addmonthstodate($date,$renov);
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."renewals";
-	$sql.= " VALUES (".$id.",".$renew_date.")";
+	$sql.= " VALUES (".$id.",'".$date->format('Y-m-d')."')";
 	$result = $db->query($sql);
 	if ($result) return 1;
 	else return -1;
