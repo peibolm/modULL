@@ -56,22 +56,12 @@ class InterfaceProductaddition extends DolibarrTriggers{
      */
 
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf){
-		// Put here code you want to execute when a Dolibarr business events occurs.
-		// Data and type of action are stored into $object and $action
 	    
 		if ($action == 'LINEBILL_INSERT'){
-			if (is_financed($object->fk_product)){
+			if (is_financed($object->fk_product) && factura_scs($object->fk_facture)){
 				$array = check_finance($object->fk_product);
 				$object->desc = "CÓDIGO SCS: ".$array['code'];
 				$aux = change_desc($object);
-				//jbeta
-				$formconfirm = '';
-				$formtest = new Form($object->db);
-				$formconfirm = $formtest->formconfirm("http://google.es", "test", "test", 'confirm_delete', '', "yes", 1);
-				//----
-				
-				//setEventMessage('Esto es una prueba ' .$object->rowid. ' ' .$object->desc. ' ' .$aux, 'errors'); // errors, mesgs, warnings
-				
 			}
 			return 1;
 		}

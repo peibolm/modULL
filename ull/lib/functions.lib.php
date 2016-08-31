@@ -179,7 +179,16 @@ global $db;
 	else return -1;
 }
 
-
-
+function factura_scs ($id){
+global $db;
+	$sql = "SELECT scs";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture_extrafields";
+	$sql.= " WHERE fk_object = ".$id;
+	$result = $db->query($sql);
+	if ($result){
+		$objp = $db->fetch_object($result);
+		return $objp->scs;
+	}
+}
 
 
