@@ -1,8 +1,6 @@
 <?php
-/**
- * Checks if product with certain $id has the extrafield $cod_scs filled or not
-*/
 function is_financed($id){
+//Checks if product with certain $id has the extrafield $cod_scs filled or not
 	global $db;
 	$sql = "SELECT cod_scs";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product_extrafields";
@@ -16,7 +14,8 @@ function is_financed($id){
 	else return -1;
 }
 
-function check_finance($id){
+function get_finance($id){
+//Gets the finance info from product id.
 	global $db;
 	$sql = "SELECT p.price_ttc as price, e.cod_scs as code, s.finance as finance, s.user_contrib as user_contrib, s.description as description";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -41,6 +40,7 @@ function check_finance($id){
 }
 
 function is_renewable($object){
+//Checks if product can be renewed
 	global $db;
 	$productid = $object->fk_product;
 	$sql = "SELECT s.renov as renew";
@@ -59,6 +59,7 @@ function is_renewable($object){
 }
 
 function change_desc($object){
+//Change description of bill line. Used to set SCS code
 global $db;
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet";
 	$sql.= " SET description = '".$db->escape($object->desc);
@@ -70,6 +71,7 @@ global $db;
 
 
 function composerenewemail($name, $mail, $itemname, $renewdate){
+//Sends a renew e-mail message
 $message="Estimado {$name}, \n El material ortopédico {$itemname} obtenido a través de nosotros podrá ser renovado a partir de {$renewdate}";
 	$mailto = new CMailFile(
 		$subject="Próxima renovación de su material ortopédico",
@@ -83,6 +85,7 @@ $message="Estimado {$name}, \n El material ortopédico {$itemname} obtenido a tr
 }
 
 function deleterenew($id){
+//Deletes renew register from DB
 global $db;
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."renewals";
 	$sql.= " WHERE id = ".$id;
@@ -93,6 +96,7 @@ global $db;
 }
 
 function addmonthstodate($date,$months){
+//Adds months to a given date without modifying day.
 	$monthToAdd = $months;
 
 	$d1 = $date;
@@ -121,11 +125,9 @@ function addmonthstodate($date,$months){
 	return $d2;
 }
 
-/**
-* Adds a new line into renewal list
-*/
 
 function set_renewal($id,$invoice_date,$renov){
+//Adds a new line into renewal list
 global $db;
 	$date = new DateTime("@$invoice_date");
 	$date = addmonthstodate($date,$renov);
@@ -137,6 +139,7 @@ global $db;
 }
 
 function factura_scs ($id){
+//Checks if bill is for delivering to SCS
 global $db;
 	$sql = "SELECT scs";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture_extrafields";

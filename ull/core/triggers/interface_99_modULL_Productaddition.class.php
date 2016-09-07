@@ -59,7 +59,7 @@ class InterfaceProductaddition extends DolibarrTriggers{
 	    
 		if ($action == 'LINEBILL_INSERT'){
 			if (is_financed($object->fk_product) && factura_scs($object->fk_facture)){
-				$array = check_finance($object->fk_product);
+				$array = get_finance($object->fk_product);
 				$object->desc = "CÓDIGO SCS: ".$array['code'];
 				$aux = change_desc($object);
 			}
@@ -69,7 +69,7 @@ class InterfaceProductaddition extends DolibarrTriggers{
 		
 		//COMPROBAR SI PRODUCTO AÑADIDO A TICKET DISPONE DE FINANCIACIÓN POR PARTE DEL SERVICIO CANARIO DE SALUD
 			if (is_financed($object->id)) {
-				$array = check_finance($object->id);
+				$array = get_finance($object->id);
 				$finance = number_format($array['finance'], 2, '.', '');
 				$msg = 'Este producto dispone de '.$finance.'€ de financiación del SCS.';
 				if ($array['user_contrib'] > 0){
