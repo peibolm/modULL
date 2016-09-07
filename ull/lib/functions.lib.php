@@ -78,61 +78,18 @@ $message="Estimado {$name}, \n El material ortopédico {$itemname} obtenido a tr
 		$message
 	);
 	if ($mailto->sendfile()) return 1;
-	else	return 0;
+	else	return -1;
 	
 }
 
 function deleterenew($id){
 global $db;
-	$sql = "DELETE * FROM ".MAIN_DB_PREFIX."renewals";
-	$sql.= " WHERE id =".$id.")";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."renewals";
+	$sql.= " WHERE id = ".$id;
 	$resql = $db->query($sql);
 	if ($resql)
 		return 1;
 	else return -1;
-}
-/**
-*Obtains bought items that have to be reminded to renew (supposed to be called from cronjob)
-*/
-function get_renewal(){
-global $db;
-	$sql = "SELECT c.nom as nom, c.email as email, p.label as itemname, r.renew_date as renew_date, r.id as rid";
-	$sql.= " FROM ".MAIN_DB_PREFIX."renewals as r";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet as d";
-	$sql.= " ON r.id = d.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture  as f";
-	$sql.= " ON d.fk_facture = f.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe  as c";
-	$sql.= " ON f.fk_soc = c.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product  as p";
-	$sql.= " ON d.fk_product = p.rowid";
-	$sql.= " WHERE DATE_ADD(r.renew_date,INTERVAL 1 MONTH) > NOW()";
-	$resql = $db->query($sql);
-	
-	if ($resql){
-	 $numrows=$db->num_rows($resql);
-        $i=0;
-        $err=0;
-        while ($i < $numrows)
-        {
-		$objp = $db->fetch_object($resql);
-		$array = array(
-				"itemname" => $objp->itemname,
-				"renewdate" => $objp->renew_date,
-				"clientname" => $objp->nom,
-				"email" => $objp->email,				
-				);
-				
-				$sendit = composerenewemail($array["clientname"], $array["email"], $array["itemname"], $array["renewdate"]);
-				if ($sendit){
-					deleterenew($objp->rid);
-					
-				}
-		}
-	}
-	
-	else return -1;
-	
 }
 
 function addmonthstodate($date,$months){

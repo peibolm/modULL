@@ -51,7 +51,7 @@ class modULL extends DolibarrModules
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 125054;		// TODO Go on page http://wiki.dolibarr.org/index.php/List_of_modules_id to reserve id number for your module
 		// Key text used to identify module (for permissions, menus, etc...)
-		$this->rights_class = 'ULL-TFM';
+		$this->rights_class = 'ull';
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
@@ -179,7 +179,7 @@ class modULL extends DolibarrModules
 		//);
 
 		// Cronjobs
-		$this->cronjobs = array();			// List of cron jobs entries to add
+		$this->cronjobs = array(0=>array('label'=>'Send email renewals', 'jobtype'=>'method', 'class'=>'renew.class.php', 'method'=>'get_renewal', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>86400, 'unitfrequency'=>86400));			// List of cron jobs entries to add
 		// Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>3600, 'unitfrequency'=>3600),
 		//                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>3600, 'unitfrequency'=>3600)
 		// );
@@ -289,8 +289,8 @@ class modULL extends DolibarrModules
 		$param = 0,
 		$alwayseditable=0);
 		
-		$this->SNS->addExtraField($attrname = 'cronico',
-		$label = '¿Crónico?',
+		$this->SNS->addExtraField($attrname = 'renov',
+		$label = 'Avisar renovacion',
 		$type = 'boolean',
 		$pos = 2,
 		$size = '',
@@ -324,7 +324,7 @@ class modULL extends DolibarrModules
 		$sql = array();
 
 		return $this->_remove($sql, $options);
-	}
+	}	
 
 }
 

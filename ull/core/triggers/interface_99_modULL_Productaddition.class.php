@@ -79,19 +79,20 @@ class InterfaceProductaddition extends DolibarrTriggers{
 				if (($array['price']-$array['user_contrib'])>240.40) //Comprobar si es posible endoso
 					$msg.= ' ENDOSO POSIBLE.';
 				setEventMessage($msg , 'mesgs'); // errors, mesgs, warnings
+				return 1;
 				}
-			else setEventMessage('Este producto NO tiene financiación :(', 'errors'); // errors, mesgs, warnings
-			return 1;
+			else return 0;
 		}
 		elseif ($action == 'BILL_VALIDATE'){
 		//AÑADIR PRODUCTOS CON RENOVACIÓN A TABLA 'RENEWALS' SI LA FACTURA TIENE SELECCIONADA LA OPCIÓN CRÓNICO.
 			foreach($object->lines as $line){
 				$aux = is_renewable($line);
-				if ($aux!=0 && $object->array_options['options_cronico'] == 1){
+				if ($aux!=0 && $object->array_options['options_renov'] == 1){
 					$test = set_renewal($line->id,$object->date, $aux);
 					if ($test != 1) setEventMessage("Error al añadir renovación a la db.", ' errors');
 				}
 			}
+			return 1;
 		}
 		else return 0;
 	}
